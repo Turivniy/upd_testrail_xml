@@ -25,11 +25,16 @@ def memoize(f):
 
 
 class Reporter(object):
-    def __init__(self, xunit_report, env_description, test_results_link,
+    def __init__(self,
+                 xunit_report,
+                 output_xunit_report,
+                 env_description,
+                 test_results_link,
                  paste_url, *args, **kwargs):
         self._config = {}
         self._cache = {}
         self.xunit_report = xunit_report
+        self.output_xunit_report = output_xunit_report
         self.env_description = env_description
         self.test_results_link = test_results_link
         self.paste_url = paste_url
@@ -142,5 +147,4 @@ class Reporter(object):
             root.append(testcase)
 
         tree = ET.ElementTree(root)
-        tree.write('temp_xunit_report.xml')
-        self.xunit_report = 'temp_xunit_report.xml'
+        tree.write(self.output_xunit_report)

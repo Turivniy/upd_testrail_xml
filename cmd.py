@@ -37,6 +37,7 @@ def parse_args(args):
         'TESTRAIL_MILESTONE': '9.0',
         'TESTRAIL_TEST_SUITE': '[{0.testrail_milestone}] MOSQA',
         'XUNIT_REPORT': 'report.xml',
+        'OUTPUT_XUNIT_REPORT': 'output_report.xml',
         'XUNIT_NAME_TEMPLATE': '{id}',
         'TESTRAIL_NAME_TEMPLATE': '{custom_report_label}',
         'ISO_ID': None,
@@ -53,6 +54,12 @@ def parse_args(args):
         type=filename,
         default=defaults['XUNIT_REPORT'],
         help='xUnit report XML file')
+
+    parser.add_argument(
+        '--output-xunit-report',
+        type=str_cls,
+        default=defaults['OUTPUT_XUNIT_REPORT'],
+        help='Output xUnit report XML file after update')
 
     parser.add_argument(
         '--xunit-name-template',
@@ -177,6 +184,7 @@ def main(args=None):
 
     reporter = Reporter(
         xunit_report=args.xunit_report,
+        output_xunit_report=args.output_xunit_report,
         env_description=args.env_description,
         test_results_link=args.test_results_link,
         paste_url=args.paste_url)
