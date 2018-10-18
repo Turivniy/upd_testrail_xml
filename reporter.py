@@ -120,7 +120,8 @@ class Reporter(object):
                 if empty_classname['classname'] in case['title']:
 
                     updated_case = {'classname': empty_classname['classname'],
-                                    'name': case['title'],
+                                    'name': case['custom_test_case_description'],
+                                    # 'name': case['title'],
                                     'data': empty_classname['data']}
                     needed_cases.append(updated_case)
 
