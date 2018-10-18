@@ -199,14 +199,12 @@ def main(args=None):
         send_duplicates=args.send_duplicates,
         use_test_run_if_exists=args.use_test_run_if_exists)
 
-    # ====================================================================
 
     all_cases = reporter.get_cases()
     empty_classnames = reporter.get_empty_classnames()
     all_empty_cases = reporter.get_testcases(all_cases, empty_classnames)
 
     reporter.update_testcases(all_empty_cases)
-    # ====================================================================
 
 
 if __name__ == '__main__':

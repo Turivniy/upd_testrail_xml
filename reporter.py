@@ -114,24 +114,19 @@ class Reporter(object):
         return classnames
 
     def get_testcases(self, all_cases, empty_classnames):
-
-        all_empty_cases = []
-        all_data_empty_cases = {'classname': '', 'name': '', 'data': ''}
+        needed_cases = []
         for empty_classname in empty_classnames:
             for case in all_cases:
                 if empty_classname['classname'] in case['title']:
 
-                    all_data_empty_cases['classname'] = empty_classname['classname']
-                    all_data_empty_cases['name'] = case['custom_report_label']
-                    all_data_empty_cases['data'] = empty_classname['data']
+                    updated_case = {'classname': empty_classname['classname'],
+                                    'name': case['title'],
+                                    'data': empty_classname['data']}
+                    needed_cases.append(updated_case)
 
-                    all_empty_cases.append(all_data_empty_cases)
-
-        # Remove duplicates and return list of dics
-        return [dict(t) for t in {tuple(d.items()) for d in all_empty_cases}]
+        return needed_cases
 
     def update_testcases(self, cases):
-
         tree = ET.parse(self.xunit_report)
         root = tree.getroot()
 
