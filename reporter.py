@@ -142,5 +142,16 @@ class Reporter(object):
 
             root.append(testcase)
 
+        for case in cases:
+            for child in root:
+                try:
+                    if child.attrib['classname'] == "":
+
+                        print(child)
+                        child.clear()
+                except KeyError:
+                    pass
+
+
         tree = ET.ElementTree(root)
         tree.write(self.output_xunit_report)
