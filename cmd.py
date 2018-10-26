@@ -205,6 +205,8 @@ def main(args=None):
     all_empty_cases = reporter.get_testcases(all_cases, empty_classnames)
 
     reporter.update_testcases(all_empty_cases)
+    reporter.delete_duplicates()
+    reporter.delete_temporary_file()
 
 
 if __name__ == '__main__':

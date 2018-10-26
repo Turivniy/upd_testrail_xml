@@ -2,6 +2,7 @@ from __future__ import absolute_import, print_function
 
 from functools import wraps
 import logging
+import os
 import re
 import six
 
@@ -79,6 +80,8 @@ class Reporter(object):
 
 # ================================================================
 
+    temporary_filename = 'temporary_xunit_report.xml'
+
     def describe_testrail_case(self, case):
         return {
             k: v
@@ -121,7 +124,6 @@ class Reporter(object):
 
                     updated_case = {'classname': empty_classname['classname'],
                                     'name': case['custom_test_case_description'],
-                                    # 'name': case['title'],
                                     'data': empty_classname['data']}
                     needed_cases.append(updated_case)
 
@@ -142,7 +144,7 @@ class Reporter(object):
 
             root.append(testcase)
 
-        for case in cases:
+        for _ in cases:
             for child in root:
                 try:
                     if child.attrib['classname'] == "":
@@ -150,6 +152,35 @@ class Reporter(object):
                 except KeyError:
                     pass
 
+        tree = ET.ElementTree(root)
+        tree.write(self.temporary_filename)
+
+    def delete_duplicates(self):
+        tree = ET.parse(self.temporary_filename)
+        root = tree.getroot()
+
+        all_cases = []
+        for child in root:
+            try:
+                all_cases.append((child.attrib['classname'], child.attrib['name']))
+            except KeyError:
+                pass
+        # Get duplicates
+        for_stack = lambda all_cases: sorted(list(set([x for x in all_cases if all_cases.count(x) > 1])))
+        duplicate_cases = for_stack(all_cases)
+
+        # Remove duplicates from xml
+        for case in duplicate_cases:
+            for child in root:
+                try:
+                    if child.attrib['classname'] == case[0] and child.attrib['name'] == case[1]:
+                        if child.attrib['time'] != '0.000':
+                            child.clear()
+                except KeyError:
+                    pass
 
         tree = ET.ElementTree(root)
         tree.write(self.output_xunit_report)
+
+    def delete_temporary_file(self):
+        os.remove(self.temporary_filename)
