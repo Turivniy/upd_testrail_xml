@@ -146,8 +146,6 @@ class Reporter(object):
             for child in root:
                 try:
                     if child.attrib['classname'] == "":
-
-                        print(child)
                         child.clear()
                 except KeyError:
                     pass
