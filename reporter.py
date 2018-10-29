@@ -174,7 +174,7 @@ class Reporter(object):
             for child in root:
                 try:
                     if child.attrib['classname'] == case[0] and child.attrib['name'] == case[1]:
-                        if child.attrib['time'] != '0.000':
+                        if child.attrib['time'] == '0.000':
                             child.clear()
                 except KeyError:
                     pass
