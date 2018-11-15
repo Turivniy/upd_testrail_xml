@@ -10,6 +10,8 @@ import xml.etree.ElementTree as ET
 
 from client import Client as TrClient
 
+import logging
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -81,6 +83,7 @@ class Reporter(object):
 # ================================================================
 
     temporary_filename = 'temporary_xunit_report.xml'
+    logger.info(' Temporrary filename is: {}'.format(temporary_filename))
 
     def describe_testrail_case(self, case):
         return {
@@ -90,11 +93,13 @@ class Reporter(object):
 
     def get_cases(self):
         """Get all the testcases from the server"""
+        logger.info(' Start gerring cases from the Testrail')
         cases_data = []
         cases = self.suite.cases()
         for case in cases:
             case_data = self.describe_testrail_case(case)
             cases_data.append(case_data)
+        logger.info(' Cases were got from the Testrail')
         return cases_data
 
     def get_empty_classnames(self):
@@ -114,6 +119,7 @@ class Reporter(object):
 
                 classnames.append(classnames_data)
 
+        logger.info(' Got empty classnames from xml file')
         return classnames
 
     def get_testcases(self, all_cases, empty_classnames):
@@ -126,7 +132,7 @@ class Reporter(object):
                                     'name': case['custom_test_case_description'],
                                     'data': empty_classname['data']}
                     needed_cases.append(updated_case)
-
+        logger.info(' Got test cases for updating xml file')
         return needed_cases
 
     def update_testcases(self, cases):
@@ -151,11 +157,13 @@ class Reporter(object):
                         child.clear()
                 except KeyError:
                     pass
-
+        logger.info(' Create temporrary file: {}'.format(str(self.temporary_filename)))
         tree = ET.ElementTree(root)
         tree.write(self.temporary_filename)
+        logger.info(' Temporrary file was created: {}'.format(self.check_file_exists(self.temporary_filename)))
 
     def delete_duplicates(self):
+        logger.info(' Start deleting duplicates from xml file: {}'.format(self.temporary_filename))
         tree = ET.parse(self.temporary_filename)
         root = tree.getroot()
 
@@ -179,8 +187,15 @@ class Reporter(object):
                 except KeyError:
                     pass
 
+        logger.info(' Start saving results to the file: {}'.format(self.output_xunit_report))
         tree = ET.ElementTree(root)
         tree.write(self.output_xunit_report)
 
+        logger.info(' {} file was created: {}'.format(self.output_xunit_report, self.check_file_exists(self.output_xunit_report)))
+
+    def check_file_exists(self, filename):
+        return str(os.path.isfile(filename))
+
     def delete_temporary_file(self):
         os.remove(self.temporary_filename)
+        logger.info(' Temporrary file exists: {}'.format(self.check_file_exists(self.temporary_filename)))
