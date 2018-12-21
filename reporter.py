@@ -107,17 +107,11 @@ class Reporter(object):
         root = tree.getroot()
 
         classnames = []
-        classnames_data = {'classname': '', 'data': ''}
         for child in root:
             if child.attrib['classname'] == '' and child[0].tag == 'failure':
-
                 m = re.search('\(.*\)', child.attrib['name'])
                 classname = m.group()[1:-1]
-
-                classnames_data['classname'] = classname
-                classnames_data['data'] = child[0].text
-
-                classnames.append(classnames_data)
+                classnames.append({'classname': classname, 'data': child[0].text})
 
         logger.info(' Got empty classnames from xml file')
         return classnames
