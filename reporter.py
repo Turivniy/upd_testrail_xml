@@ -105,6 +105,9 @@ class Reporter(object):
     def get_empty_classnames(self):
         tree = ET.parse(self.xunit_report)
         root = tree.getroot()
+        
+        if root[0].tag == 'testsuite':
+            root = root[0]
 
         classnames = []
         for child in root:
